@@ -35,25 +35,31 @@ const AnswerCard = ({ question, answer }) => {
 
   // 🔗 Share card as image
   const shareImage = async () => {
-    if (!navigator.canShare || !navigator.canShare({ files: [] })) {
-      alert('Sharing not supported on this browser.');
-      return;
-    }
-
     const canvas = await html2canvas(cardRef.current, { scale: 2 });
+  
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'isitharam-answer.png', { type: 'image/png' });
+  
+      // ✅ Check browser support for navigator.canShare with files
+      if (
+        typeof navigator.canShare !== 'function' ||
+        !navigator.canShare({ files: [file] })
+      ) {
+        alert('Sharing is only supported on mobile browsers like Chrome or Safari. You can still save the image instead.');
+        return;
+      }
+  
       try {
         await navigator.share({
           title: 'Is It Haram or Halal?',
           text: 'Check out this Islamic answer.',
-          files: [file]
+          files: [file],
         });
       } catch (err) {
-        alert('Failed to share.');
+        alert('Sharing failed. Please try again.');
       }
     }, 'image/png');
-  };
+  };  
 
   return (
     <div>
