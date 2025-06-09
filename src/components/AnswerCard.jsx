@@ -5,15 +5,15 @@ const AnswerCard = ({ question, answer }) => {
   let explanation = answer;
   let sourceText = '';
 
-  // Try to extract source in parentheses at end
+  // Extract (Source: ...)
   const sourceMatch = answer.match(/\(Source:\s*(.*?)\)/i);
   if (sourceMatch) {
     sourceText = sourceMatch[1];
-    explanation = answer.replace(sourceMatch[0], '').trim(); // remove from explanation
+    explanation = answer.replace(sourceMatch[0], '').trim();
   }
 
-  // Try to extract the "ruling" (emoji + few words before the main body)
-  const rulingMatch = explanation.match(/^(✅|❌|⚠️)?\s*\b[A-Z][^.:!?]+[:.]/);
+  // Extract ruling (e.g., ✅ Halal:)
+  const rulingMatch = explanation.match(/^(✅|❌|⚠️)?\s*\b([A-Z][^.:!?]+):/);
   if (rulingMatch) {
     ruling = rulingMatch[0].trim();
     explanation = explanation.slice(ruling.length).trim();
@@ -21,12 +21,25 @@ const AnswerCard = ({ question, answer }) => {
 
   return (
     <div className="answer-card">
-      <h3>Q: {question}</h3>
-      {ruling && <p><strong>{ruling}</strong></p>}
-      <p>{explanation}</p>
+      <h3>❓ {question}</h3>
+
+      {ruling && (
+        <p style={{ fontSize: '1.1rem', fontWeight: 'bold', marginTop: '1rem' }}>
+          📌 Verdict: <span style={{ color: '#C97D60' }}>{ruling}</span>
+        </p>
+      )}
+
+      {explanation && (
+        <p style={{ marginTop: '1rem', lineHeight: '1.6' }}>
+          <strong>💬 Explanation:</strong><br />
+          {explanation}
+        </p>
+      )}
+
       {sourceText && (
         <p style={{ marginTop: '1rem', fontStyle: 'italic' }}>
-          <strong>Source:</strong> {sourceText.startsWith('http') ? (
+          <strong>📚 Source:</strong>{' '}
+          {sourceText.startsWith('http') ? (
             <a href={sourceText} target="_blank" rel="noopener noreferrer">
               {sourceText}
             </a>
