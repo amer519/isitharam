@@ -190,3 +190,60 @@ button.ask-mufti-icon::before {
     padding: 10px 18px;
   }
 }
+
+/* 🌄 Answer Card with Background */
+.image-card,
+.answer-card.image-card {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background-image: url('/postcard_bg.png'); /* Use your actual image */
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
+  overflow: hidden;
+  border-top: 8px solid #D4AF37;
+  border-bottom: 8px solid #D4AF37;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ⬜️ Overlay with rounded edges */
+.answer-overlay {
+  background-color: rgba(255, 250, 242, 0.92);
+  padding: 2rem;
+  position: relative;
+  z-index: 2;
+  border-radius: 16px;
+  backdrop-filter: blur(2px);
+}
+
+/* ❓ Question */
+.answer-question {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #1C3A3E;
+}
+
+/* 📌 Verdict */
+.answer-ruling {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #C97D60;
+  margin-bottom: 1rem;
+}
+
+/* 💬 Explanation */
+.answer-explanation {
+  line-height: 1.6;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+  color: #1C3A3E;
+}
+
+/* 📚 Source */
+.answer-source {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #444;
+}

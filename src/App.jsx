@@ -65,9 +65,9 @@ function App() {
       {answer && (
         <div>
           <AnswerCard question={question} answer={answer} />
-          {user && (
+          {/* {user && (
             <button onClick={() => saveAnswer(question, answer)}>💾 Save Answer</button>
-          )}
+          )} */}
         </div>
       )}
     </div>
