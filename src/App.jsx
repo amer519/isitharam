@@ -1,17 +1,20 @@
+// App.jsx
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import AskForm from './components/AskForm';
 import AnswerCard from './components/AnswerCard';
-import './App.css';
 import AuthButtons from './components/AuthButtons';
+import EvergreenPage from './components/EvergreenPage'; // ✅ NEW
+import './App.css';
 
 import { auth } from './firebase';
-import { signInAnonymously } from 'firebase/auth'; // ✅ ADD THIS
+import { signInAnonymously } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { checkUserQuota } from './utils/usageTracker';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 
-function App() {
+function HomePage() {
   const [user] = useAuthState(auth);
   const [question, setQuestion] = React.useState('');
   const [answer, setAnswer] = React.useState('');
@@ -27,35 +30,35 @@ function App() {
           console.error("❌ Anonymous sign-in failed:", error);
         });
     }
-  }, []);  
+  }, []);
 
   const handleAsk = async (q) => {
     setQuestion(q);
     setLoading(true);
-  
+
     const remaining = await checkUserQuota();
     if (remaining <= 0) {
       setAnswer("❌ You've hit the free limit. Come back tomorrow or upgrade.");
       setLoading(false);
       return;
     }
-  
+
     try {
       console.log("🔍 Submitting question to AI...");
       const { fetchAIAnswer } = await import('./utils/fetchAnswer');
       const response = await fetchAIAnswer(q);
       console.log("✅ Got AI response:", response);
-  
+
       setAnswer(response);
       await savePublicQuestion(q, response);
-  
+
     } catch (err) {
       console.error("❌ Error in handleAsk:", err);
       setAnswer("Error fetching answer. Try again.");
     }
-  
+
     setLoading(false);
-  };  
+  };
 
   const saveAnswer = async (question, answer) => {
     const uid = auth.currentUser?.uid;
@@ -68,7 +71,6 @@ function App() {
     });
   };
 
-  // ✅ Save every asked Q&A to public Firestore collection
   const savePublicQuestion = async (question, answer) => {
     try {
       const payload = {
@@ -78,18 +80,17 @@ function App() {
         uid: auth.currentUser?.uid || null,
         createdAt: serverTimestamp()
       };
-  
+
       console.log("🔥 Saving question with payload:", payload);
-  
+
       const docRef = await addDoc(collection(db, "questions"), payload);
       console.log("✅ Saved question to Firestore with ID:", docRef.id);
-  
+
     } catch (err) {
       console.error("❌ Firestore save error:", err);
     }
-  };  
+  };
 
-  // 🧠 Simple keyword-based category detection
   const detectCategory = (text) => {
     const lower = text.toLowerCase();
     if (lower.includes('music') || lower.includes('song')) return 'music';
@@ -102,22 +103,35 @@ function App() {
   return (
     <div className="container">
       <h1>Is It Haram or Halal?</h1>
-  
+
       <div className="auth-buttons">
         <AuthButtons />
       </div>
-  
+
       <AskForm onAsk={handleAsk} />
-  
+
       {loading && <p>Loading...</p>}
-  
+
       {answer && (
         <div>
           <AnswerCard question={question} answer={answer} />
         </div>
       )}
     </div>
-  );  
+  );
+}
+
+// ✅ Wrap the homepage + evergreen routing
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/music-in-islam" element={<EvergreenPage topic="music" />} />
+      <Route path="/relationships-in-islam" element={<EvergreenPage topic="relationships" />} />
+      <Route path="/business-in-islam" element={<EvergreenPage topic="business" />} />
+      <Route path="/mental-health-in-islam" element={<EvergreenPage topic="mental-health" />} />
+    </Routes>
+  );
 }
 
 export default App;
