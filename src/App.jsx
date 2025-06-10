@@ -130,6 +130,11 @@ function App() {
       <Route path="/relationships-in-islam" element={<EvergreenPage topic="relationships" />} />
       <Route path="/business-in-islam" element={<EvergreenPage topic="business" />} />
       <Route path="/mental-health-in-islam" element={<EvergreenPage topic="mental-health" />} />
+      <Route path="/halal-food-in-islam" element={<EvergreenPage topic="halal-food" />} />
+      <Route path="/modesty-in-islam" element={<EvergreenPage topic="modesty" />} />
+      <Route path="/marriage-in-islam" element={<EvergreenPage topic="marriage" />} />
+      <Route path="/finance-in-islam" element={<EvergreenPage topic="finance" />} />
+
     </Routes>
   );
 }
